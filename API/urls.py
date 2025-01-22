@@ -6,9 +6,9 @@ from API.views import (
 )
 
 router = routers.DefaultRouter()
-router.register(r'custom_user', CustomUserApiView)
+router.register(r'custom-user', CustomUserApiView)
 router.register(r'storage', StorageApiView)
-router.register(r'storage_unit', StorageUnitApiView)
+router.register(r'storage-unit', StorageUnitApiView)
 router.register(r'order', OrderApiView)
 
 urlpatterns = [

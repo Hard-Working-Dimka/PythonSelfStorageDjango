@@ -20,9 +20,15 @@ class Storage(models.Model):
 
 
 class StorageUnit(models.Model):
+    SIZE_CHOICES = [
+        ('small', 'Маленький (до 1 м3)'),
+        ('medium', 'Средний (1-5 м3)'),
+        ('large', 'Большой (Более 5 м3)'),
+    ]
+
     storage = models.ForeignKey(Storage, on_delete=models.CASCADE, related_name="units")
     unit_number = models.CharField(max_length=50)
-    size = models.CharField(max_length=50)
+    size = models.CharField(max_length=10, choices=SIZE_CHOICES)
     is_occupied = models.BooleanField(default=False)
 
     def __str__(self):
@@ -46,6 +52,19 @@ class Order(models.Model):
     end_date = models.DateTimeField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='in_storage')
     qr_issued = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        if self.qr_issued and self.status != 'completed':
+            self.status = 'completed'
+            if self.storage_unit:
+                self.storage_unit.is_occupied = False
+                self.storage_unit.save()
+
+        if self.storage_unit and self.status == 'in_storage':
+            self.storage_unit.is_occupied = True
+            self.storage_unit.save()
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Order #{self.id} - {self.customer.username}"

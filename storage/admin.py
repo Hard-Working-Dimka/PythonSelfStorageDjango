@@ -1,5 +1,20 @@
 from django.contrib import admin
 from .models import CustomUser, Storage, StorageUnit, Order
+from django import forms
+
+
+class OrderForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'storage' in self.initial:
+            storage_id = self.initial['storage']
+            self.fields['storage_unit'].queryset = StorageUnit.objects.filter(storage_id=storage_id, is_occupied=False)
+        else:
+            self.fields['storage_unit'].queryset = StorageUnit.objects.none()
 
 
 @admin.register(CustomUser)
@@ -31,6 +46,7 @@ class StorageUnitAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
+    form = OrderForm
     list_display = ('id', 'customer', 'storage', 'status', 'start_date', 'end_date', 'qr_issued')
     list_filter = ('status', 'storage', 'qr_issued')
     search_fields = ('customer__username', 'storage__name')

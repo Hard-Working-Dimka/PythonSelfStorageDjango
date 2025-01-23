@@ -23,13 +23,20 @@ class StorageUnitSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    customer = CustomUserSerializer()
-    storage_unit = StorageUnitSerializer()
-    storage = StorageSerializer()
+    customer = serializers.SlugRelatedField(
+        slug_field="telegram_id",
+        queryset=CustomUser.objects.all()
+    )
+    storage_unit = serializers.PrimaryKeyRelatedField(
+        queryset=StorageUnit.objects.all(), allow_null=True, required=False
+    )
+    storage = serializers.SlugRelatedField(
+        slug_field="name",
+        queryset=Storage.objects.all()
+    )
 
     class Meta:
         model = Order
-        depth = 1
         fields = (
             'id', 'customer', 'storage_unit', 'storage', 'address', 'phone_number', 'full_name', 'start_date', 'end_date',
             'status', 'qr_issued'

@@ -49,7 +49,7 @@ class Order(models.Model):
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     full_name = models.CharField(max_length=255, blank=True, null=True)
     start_date = models.DateTimeField(auto_now_add=True)
-    end_date = models.DateTimeField()
+    end_date = models.DateTimeField(blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='in_storage')
     qr_issued = models.BooleanField(default=False)
 

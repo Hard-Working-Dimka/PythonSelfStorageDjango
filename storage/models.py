@@ -52,6 +52,7 @@ class Order(models.Model):
     end_date = models.DateTimeField(blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='in_storage')
     qr_issued = models.BooleanField(default=False)
+    qr_code = models.ImageField(null=True, blank=True,)
 
     def save(self, *args, **kwargs):
         if self.qr_issued and self.status != 'completed':

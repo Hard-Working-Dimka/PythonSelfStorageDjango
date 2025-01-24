@@ -10,7 +10,10 @@ class OrderForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if 'storage' not in self.initial:
+        if 'storage' in self.initial:
+            storage_id = self.initial['storage']
+            self.fields['storage_unit'].queryset = StorageUnit.objects.filter(storage_id=storage_id, is_occupied=False)
+        else:
             self.fields['storage_unit'].queryset = StorageUnit.objects.none()
 
 
